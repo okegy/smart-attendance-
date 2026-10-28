@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Attendance Portal</title>
+    <link rel="stylesheet" href="{% static 'StudentView/Index_Style.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <header class="header">
+      <div class="header-content">
+        <div class="brand-badge">
+          <span class="brand-icon">QR</span>
+        </div>
+        <p class="eyebrow">Quick and secure</p>
+        <h1 class="header-title">EASWARI Engineering College</h1>
+        <h2>Attendance Portal</h2>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="attendance-section">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Student check-in</p>
+            <h2 class="section-title">Select your name</h2>
+          </div>
+          <p>Pick your profile once and confirm attendance in a tap.</p>
+        </div>
+
+        {% if messages %}
+          <div class="message-list">
+            {% for message in messages %}
+              <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form class="attendance-form" method="POST" action="{% url 'add_manually_post' %}">
+          {% csrf_token %}
+          <ul class="student-list">
+            {% for student in students %}
+              <li class="student-item">
+                <label class="student-label">
+                  <span class="student-name">
+                    <span class="student-roll">{{ student.s_roll }}</span>
+                    <span class="student-full-name">{{ student.s_fname }} {{ student.s_lname }}</span>
+                  </span>
+                  <input
+                    type="radio"
+                    class="student-checkbox"
+                    name="student-name"
+                    value="{{ student.s_roll }}"
+                  />
+                </label>
+              </li>
+            {% empty %}
+              <li class="empty-state">No students are available right now.</li>
+            {% endfor %}
+          </ul>
+          <button type="submit" class="submit-button">Submit attendance</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; QR Attendance System 2026 - Team Hokage</p>
+    </footer>
+  </body>
+</html>

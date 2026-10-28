@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Login - QR Attend{% endblock %}
+
+{% block content %}
+<div class="flex-grow flex items-center justify-center -mt-10">
+    <div class="w-full max-w-md">
+        <div class="glass-card p-8 animate-in relative overflow-hidden">
+            <!-- Background glow -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
+            
+            <div class="text-center mb-8 relative z-10">
+                <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-500/30">
+                    <i class="fa-solid fa-chalkboard-user text-3xl text-blue-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-tight">Faculty Login</h2>
+                <p class="text-slate-400 text-sm mt-1">Command Center Access</p>
+            </div>
+
+            <form method="POST" class="space-y-5 relative z-10 {% if form.errors %}shake{% endif %}">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        <input type="text" name="username" required 
+                            class="w-full bg-[#121326] border border-glass rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none input-glow placeholder-slate-600 transition-shadow"
+                            placeholder="Employee ID">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <input type="password" name="password" required 
+                            class="w-full bg-[#121326] border border-glass rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none input-glow placeholder-slate-600 transition-shadow"
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors btn-glow mt-2 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                    Authenticate
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center text-sm text-slate-500">
+                <a href="{% url 'home' %}" class="hover:text-white transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Role Selection</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

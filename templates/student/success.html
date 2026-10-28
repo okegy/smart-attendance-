@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Success - QR Attend{% endblock %}
+
+{% block content %}
+<div class="confetti-container" id="confetti"></div>
+
+<div class="flex-grow flex items-center justify-center -mt-10">
+    <div class="w-full max-w-md text-center">
+        <div class="glass-card p-10 animate-in">
+            
+            <div class="checkmark-circle mb-6">
+                <div class="checkmark-glow"></div>
+                <svg viewBox="0 0 120 120">
+                    <circle class="circle" cx="60" cy="60" r="54" />
+                    <path class="check" d="M35 60 L55 80 L85 40" />
+                </svg>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-white mb-2">Success!</h1>
+            <p class="text-emerald-400 font-medium mb-8">Attendance recorded successfully.</p>
+            
+            <div class="bg-[#121326] rounded-xl p-4 border border-glass mb-8">
+                <p class="text-slate-400 text-sm">You can safely close this page or return to your dashboard.</p>
+            </div>
+            
+            <a href="{% url 'student_dashboard' %}" class="inline-block bg-[#121326] hover:bg-white/5 text-white border border-glass font-medium py-3 px-8 rounded-xl transition-colors">
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Generate Confetti
+    document.addEventListener('DOMContentLoaded', () => {
+        const colors = ['#10b981', '#34d399', '#059669', '#ffffff'];
+        const container = document.getElementById('confetti');
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+            
+            // Random shape
+            if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
+            
+            container.appendChild(confetti);
+        }
+    });
+</script>
+{% endblock %}

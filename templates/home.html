@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex-grow flex items-center justify-center -mt-10">
+    <div class="w-full max-w-4xl">
+        <div class="text-center mb-12 animate-in">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">
+                Welcome to <span class="gradient-text">QR Attend</span>
+            </h1>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+                Next-generation attendance system. Fast, secure, and smart.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 px-4">
+            <!-- Student Card -->
+            <a href="{% url 'student_login' %}" class="group relative bg-[#121326] border border-glass rounded-2xl p-8 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] overflow-hidden text-left animate-in animate-in-delay-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-qrcode text-3xl text-emerald-400"></i>
+                </div>
+
+                <h2 class="text-2xl font-bold text-white mb-2">Student Portal</h2>
+                <p class="text-slate-400 text-sm mb-4">To mark your attendance, you must scan the QR code displayed by your faculty.</p>
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider border border-emerald-500/20">
+                    <i class="fa-solid fa-camera"></i> Scan QR to Enter
+                </div>
+            </a>
+
+            <!-- Faculty Card -->
+            <a href="{% url 'faculty_login' %}" class="group relative bg-[#121326] border border-glass rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] overflow-hidden text-left animate-in animate-in-delay-2">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fa-solid fa-chalkboard-user text-3xl text-blue-400"></i>
+                </div>
+
+                <h2 class="text-2xl font-bold text-white mb-2">Faculty Command Center</h2>
+                <p class="text-slate-400 text-sm">Access the dashboard, create daily sessions, and monitor attendance in real-time.</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

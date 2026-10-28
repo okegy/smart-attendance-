@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Login - QR Attend{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ---- Animated grid lines background ---- */
+    .grid-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image:
+            linear-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+        animation: gridDrift 30s linear infinite;
+        pointer-events: none;
+    }
+
+    @keyframes gridDrift {
+        0%   { background-position: 0 0; }
+        100% { background-position: 48px 48px; }
+    }
+
+    /* ---- Floating orbs specific to this page ---- */
+    .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        animation: orbFloat 12s ease-in-out infinite;
+        z-index: 0;
+    }
+    .orb-1 {
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(16,185,129,0.18), transparent 70%);
+        top: -80px; left: -80px;
+        animation-delay: 0s;
+    }
+    .orb-2 {
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, rgba(6,182,212,0.14), transparent 70%);
+        bottom: -60px; right: -60px;
+        animation-delay: -6s;
+    }
+    .orb-3 {
+        width: 200px; height: 200px;
+        background: radial-gradient(circle, rgba(139,92,246,0.12), transparent 70%);
+        top: 50%; left: 60%;
+        animation-delay: -3s;
+    }
+
+    @keyframes orbFloat {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33%  { transform: translate(20px, -30px) scale(1.05); }
+        66%  { transform: translate(-15px, 15px) scale(0.95); }
+    }
+
+    /* ---- Login card ---- */
+    .login-card {
+        background: rgba(255,255,255,0.035);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 24px;
+        box-shadow:
+            0 25px 60px rgba(0,0,0,0.4),
+            inset 0 1px 0 rgba(255,255,255,0.07),
+            0 0 80px -20px rgba(16,185,129,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(16,185,129,0.5) 30%,
+            rgba(6,182,212,0.5) 70%,
+            transparent
+        );
+    }
+
+    /* ---- Icon ring ---- */
+    .icon-ring {
+        width: 72px; height: 72px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.15));
+        border: 1px solid rgba(16,185,129,0.35);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto;
+        box-shadow: 0 0 30px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+        animation: iconPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.2), inset 0 1px 0 rgba(255,255,255,0.1); }
+        50%       { box-shadow: 0 0 40px rgba(16,185,129,0.4), inset 0 1px 0 rgba(255,255,255,0.1); }
+    }
+
+    /* ---- Input field ---- */
+    .field-wrapper {
+        position: relative;
+    }
+
+    .field-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #475569;
+        font-size: 14px;
+        pointer-events: none;
+        transition: color 0.25s;
+        z-index: 1;
+    }
+
+    .styled-input {
+        width: 100%;
+        background: rgba(12,13,26,0.8);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 14px 16px 14px 42px;
+        color: #f1f5f9;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .styled-input::placeholder { color: #334155; }
+
+    .styled-input:focus {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16,185,129,0.18);
+    }
+
+    .styled-input:focus + .field-focus-bar { opacity: 1; }
+
+    /* Tiny label that floats */
+    .field-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        letter-spacing: 0.03em;
+    }
+
+    /* ---- Submit button ---- */
+    .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+        letter-spacing: 0.02em;
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.5s;
+    }
+    .submit-btn:hover::before { transform: translateX(100%); }
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(16,185,129,0.45);
+    }
+    .submit-btn:active { transform: translateY(0) scale(0.98); }
+
+    /* ---- Info pill at bottom ---- */
+    .info-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #475569;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 999px;
+        padding: 5px 12px;
+    }
+
+    /* ---- Stats strip at top ---- */
+    .stat-strip {
+        display: flex;
+        gap: 1px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 28px;
+    }
+    .stat-item {
+        flex: 1;
+        padding: 10px 8px;
+        text-align: center;
+        background: rgba(12,13,26,0.6);
+    }
+    .stat-item:first-child { border-radius: 12px 0 0 12px; }
+    .stat-item:last-child  { border-radius: 0 12px 12px 0; }
+    .stat-num {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #10b981, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+    .stat-lbl {
+        display: block;
+        font-size: 0.65rem;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 2px;
+    }
+
+    /* ---- Divider ---- */
+    .divider {
+        display: flex; align-items: center; gap: 12px;
+        color: #334155; font-size: 0.75rem;
+        margin: 20px 0;
+    }
+    .divider::before, .divider::after {
+        content: ''; flex: 1;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ---- Show password toggle ---- */
+    .toggle-pw {
+        position: absolute;
+        right: 14px; top: 50%;
+        transform: translateY(-50%);
+        background: none; border: none;
+        color: #475569; cursor: pointer;
+        font-size: 13px;
+        padding: 4px;
+        transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: #94a3b8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Extra animated background layers for this page -->
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="flex-grow flex items-center justify-center py-8 relative z-10">
+    <div class="w-full max-w-sm">
+
+        <!-- Card -->
+        <div class="login-card px-8 pt-8 pb-6 animate-in">
+
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="icon-ring mb-4">
+                    <i class="fa-solid fa-user-graduate text-2xl text-emerald-400"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Student Portal</h1>
+                <p class="text-slate-500 text-sm mt-1">Sign in to mark your attendance</p>
+            </div>
+
+            <!-- Stats strip -->
+            <div class="stat-strip">
+                <div class="stat-item">
+                    <span class="stat-num">QR</span>
+                    <span class="stat-lbl">Scan & Mark</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">8</span>
+                    <span class="stat-lbl">Periods/Day</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">Live</span>
+                    <span class="stat-lbl">Tracking</span>
+                </div>
+            </div>
+
+            <!-- Error messages -->
+            {% if messages %}
+            <div class="mb-5 space-y-2">
+                {% for message in messages %}
+                <div class="flex items-center gap-3 p-3 rounded-xl text-sm
+                    {% if message.tags == 'error' %}bg-rose-500/10 border border-rose-500/20 text-rose-400
+                    {% elif message.tags == 'warning' %}bg-amber-500/10 border border-amber-500/20 text-amber-400
+                    {% else %}bg-blue-500/10 border border-blue-500/20 text-blue-400{% endif %}">
+                    <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %} shrink-0"></i>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="POST" class="space-y-5 {% if messages %}shake{% endif %}" id="login-form">
+                {% csrf_token %}
+
+                <!-- Roll Number -->
+                <div>
+                    <label class="field-label" for="roll_number">
+                        <i class="fa-solid fa-id-card mr-1 text-emerald-500/70"></i> Roll Number
+                    </label>
+                    <div class="field-wrapper">
+                        <i class="field-icon fa-solid fa-hashtag"></i>
+                        <input
+                            type="text" id="roll_number" name="roll_number"
+                            class="styled-input" required autocomplete="username"
+                            placeholder="e.g. 2200xxxxx"
+                            autofocus>
+                    </div>
+                </div>
+
+                <!-- Passcode -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="field-label mb-0" for="passcode">
+                            <i class="fa-solid fa-key mr-1 text-emerald-500/70"></i> Passcode
+                        </label>
+                        <span class="text-xs text-slate-600">Default: your roll no.</span>
+                    </div>
+                    <div class="field-wrapper">
+                        <i class="field-icon fa-solid fa-lock"></i>
+                        <input
+                            type="password" id="passcode" name="passcode"
+                            class="styled-input pr-10" required autocomplete="current-password"
+                            placeholder="••••••••">
+                        <button type="button" class="toggle-pw" id="toggle-pw" title="Show/hide passcode">
+                            <i class="fa-solid fa-eye" id="pw-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="submit-btn mt-2">
+                    <span id="btn-text">
+                        <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Sign In
+                    </span>
+                    <span id="btn-loading" style="display:none;">
+                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Signing in…
+                    </span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">or</div>
+
+            <!-- Bottom links -->
+            <div class="flex items-center justify-between text-xs">
+                <a href="{% url 'home' %}" class="flex items-center gap-1.5 text-slate-500 hover:text-emerald-400 transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Home
+                </a>
+                <div class="info-pill">
+                    <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                    Secure session
+                </div>
+                <a href="{% url 'faculty_login' %}" class="flex items-center gap-1.5 text-slate-500 hover:text-blue-400 transition-colors">
+                    Faculty <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Below-card hint -->
+        <p class="text-center text-xs text-slate-700 mt-5">
+            Scan the classroom QR code after signing in to mark attendance
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Show/hide password toggle
+    const toggleBtn = document.getElementById('toggle-pw');
+    const pwInput   = document.getElementById('passcode');
+    const pwIcon    = document.getElementById('pw-icon');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const isHidden = pwInput.type === 'password';
+            pwInput.type   = isHidden ? 'text' : 'password';
+            pwIcon.className = isHidden ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        });
+    }
+
+    // Loading state on submit
+    const form    = document.getElementById('login-form');
+    const btnText = document.getElementById('btn-text');
+    const btnLoad = document.getElementById('btn-loading');
+
+    if (form) {
+        form.addEventListener('submit', () => {
+            btnText.style.display = 'none';
+            btnLoad.style.display = 'inline';
+        });
+    }
+</script>
+{% endblock %}

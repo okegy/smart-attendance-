@@ -1,0 +1,308 @@
+:root {
+  --bg-primary: #05060f;
+  --bg-secondary: #0c0d1a;
+  --bg-panel: rgba(17, 24, 39, 0.7);
+  --bg-card: rgba(15, 23, 42, 0.72);
+  --bg-card-strong: rgba(15, 23, 42, 0.88);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-bright: rgba(255, 255, 255, 0.15);
+  --emerald: #10b981;
+  --cyan: #22d3ee;
+  --blue: #60a5fa;
+  --text-main: #f8fafc;
+  --text-soft: #cbd5e1;
+  --text-muted: #94a3b8;
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 28%),
+              radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 30%),
+              var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.page-glow {
+  position: fixed;
+  width: 420px;
+  height: 420px;
+  filter: blur(120px);
+  opacity: 0.45;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.glow-one {
+  background: rgba(16, 185, 129, 0.16);
+  top: -100px;
+  left: -80px;
+}
+
+.glow-two {
+  background: rgba(59, 130, 246, 0.18);
+  right: -120px;
+  bottom: -80px;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1rem 1rem;
+  text-align: center;
+}
+
+.header-content {
+  max-width: 760px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 1.75rem 1rem 1.25rem;
+  backdrop-filter: blur(18px);
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.75rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(34, 211, 238, 0.14));
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.18);
+}
+
+.brand-icon {
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.header-title {
+  font-size: clamp(1.5rem, 2vw, 2.4rem);
+  font-weight: 800;
+  margin-bottom: 0.15rem;
+}
+
+.header h2 {
+  color: var(--text-soft);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.4rem 1rem 2.25rem;
+}
+
+.attendance-section {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid var(--border-soft);
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  backdrop-filter: blur(18px);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.section-kicker {
+  color: var(--emerald);
+  text-transform: uppercase;
+  letter-spacing: 0.12rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.section-title {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  font-weight: 700;
+}
+
+.section-heading p:last-child {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 280px;
+  text-align: right;
+}
+
+.message-list {
+  display: grid;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.message {
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+}
+
+.message.success {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #bbf7d0;
+}
+
+.message.warning {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+.attendance-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.student-list {
+  list-style: none;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.student-item {
+  width: 100%;
+}
+
+.student-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  cursor: pointer;
+  padding: 1rem 1.05rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: rgba(15, 23, 42, 0.55);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.student-label:hover {
+  transform: translateY(-1px);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+}
+
+.student-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.student-roll {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+  color: var(--emerald);
+}
+
+.student-full-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.student-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--emerald);
+  cursor: pointer;
+}
+
+.empty-state {
+  padding: 1rem;
+  border-radius: 14px;
+  text-align: center;
+  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.submit-button {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 0.95rem 1rem;
+  background: linear-gradient(135deg, var(--emerald), #0ea5e9);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 14px 30px rgba(16, 185, 129, 0.25);
+}
+
+.submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 35px rgba(16, 185, 129, 0.32);
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: 0.82rem;
+  padding: 0 1rem 1.3rem;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding-top: 1rem;
+  }
+
+  .attendance-section {
+    padding: 1rem;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-heading p:last-child {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .student-label {
+    padding: 0.9rem 0.85rem;
+  }
+}
+

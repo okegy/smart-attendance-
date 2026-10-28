@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Attendance System</title>
+    <link rel="stylesheet" href="{% static 'FacultyView/Index_Style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-content">
+        <div>
+          <p class="eyebrow">Smart attendance portal</p>
+          <h1>EASWARI Engineering College</h1>
+          <h2>Faculty Dashboard</h2>
+        </div>
+        <div class="hero-badge">
+          <span>Live session</span>
+          <strong>{{ students|length }} present</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel present-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-label">Current attendance</p>
+            <h3>Present students</h3>
+          </div>
+          <div class="count-chip">{{ students|length }} marked</div>
+        </div>
+
+        {% if messages %}
+          <div class="message-list">
+            {% for message in messages %}
+              <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form class="attendance-form" method="POST">
+          {% csrf_token %}
+          {% if students %}
+            <ul class="student-list">
+              {% for student in students %}
+                <li class="student">
+                  <label class="student-label">
+                    <span class="student-name">
+                      {{ student.s_roll }} - {{ student.s_fname }} {{ student.s_lname }}
+                    </span>
+                    <button
+                      type="submit"
+                      name="student_id"
+                      value="{{ student.s_roll }}"
+                      class="delete-button"
+                      title="Remove from list"
+                    >
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </label>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="empty-state">No students have been marked present yet.</div>
+          {% endif %}
+        </form>
+
+        <div class="panel-actions">
+          <a href="{% url 'add_manually' %}" class="btn btn-secondary">+ Add manually</a>
+          <a href="/" class="btn btn-primary">✔ Submit session</a>
+        </div>
+      </section>
+
+      <section class="panel side-panel">
+        <div class="card">
+          <h3>Scan to mark attendance</h3>
+          <img
+            src="{% static 'FacultyView/qrcode.png' %}"
+            alt="QR Code"
+            width="220"
+            height="220"
+          />
+          <p class="hint">Connect to college Wi-Fi and let students scan this QR code to mark themselves present.</p>
+        </div>
+
+        <div class="card">
+          <h3>Add a student to the database</h3>
+          <form method="post" action="{% url 'add_student' %}" class="student-form">
+            {% csrf_token %}
+            <input type="text" name="s_roll" placeholder="Roll number" required />
+            <input type="text" name="s_fname" placeholder="First name" required />
+            <input type="text" name="s_lname" placeholder="Last name" required />
+            <input type="text" name="s_branch" placeholder="Branch" required />
+            <input type="text" name="s_section" placeholder="Section" required />
+            <input type="number" name="s_year" placeholder="Year" min="1" max="4" required />
+            <button type="submit" class="btn btn-primary full-width">Add student</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; QR Attendance System 2026 - Team Hokage</p>
+    </footer>
+  </body>
+</html>

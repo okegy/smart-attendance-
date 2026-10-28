@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Session Monitor - QR Attend{% endblock %}
+
+{% block nav_actions %}
+<a href="{% url 'faculty_dashboard' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto w-full animate-in">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">Live Monitor</h1>
+            <p class="text-slate-400">Session: {{ session.date }} | <span class="text-emerald-400 uppercase tracking-wide text-sm font-bold"><i class="fa-solid fa-circle text-[10px] mr-1"></i> Active</span></p>
+        </div>
+        
+        <div class="qr-container bg-white p-4 rounded-xl shrink-0">
+            <img src="{{ qr_url }}" alt="QR Code" class="w-32 h-32" />
+        </div>
+    </div>
+
+    <!-- Student Grid -->
+    <div class="glass-card p-6 mb-8">
+        <h2 class="text-xl font-bold mb-6 flex items-center justify-between">
+            <span>Attendance Grid</span>
+            <span class="text-sm font-normal text-slate-400 bg-[#121326] px-3 py-1 rounded-full border border-glass" id="grid-stats">0 Present</span>
+        </h2>
+        
+        <div id="student-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Populated by JS -->
+            <div class="col-span-full text-center py-12 text-slate-500">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-3"></i>
+                <p>Loading live data...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.SESSION_ID = {{ session.id }};
+    window.IS_FULL_MONITOR = true;
+</script>
+<script src="{% static 'js/faculty_live.js' %}"></script>
+{% endblock %}

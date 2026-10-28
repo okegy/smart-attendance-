@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QR Attendance System{% endblock %}</title>
+    
+    <!-- Tailwind CSS (Play CDN for local development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0a0a0f',
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        'glass-border': 'rgba(255, 255, 255, 0.1)',
+                        emerald: {
+                            500: '#10b981',
+                            glow: 'rgba(16, 185, 129, 0.3)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="text-slate-200 antialiased min-h-screen relative overflow-x-hidden selection:bg-emerald-500/30">
+    
+    <!-- Animated Mesh Background -->
+    <div class="bg-mesh"></div>
+
+    <!-- Main Content Container -->
+    <div class="relative z-10 min-h-screen flex flex-col">
+        
+        <!-- Navbar -->
+        <nav class="glass-card-static mx-4 mt-4 px-6 py-4 flex justify-between items-center rounded-2xl animate-in">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                    <i class="fa-solid fa-qrcode text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white tracking-tight leading-tight">QR Attend</h1>
+                    <p class="text-xs text-slate-400 font-medium">Inderprastha Engineering College</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                {% block nav_actions %}{% endblock %}
+            </div>
+        </nav>
+
+        <!-- Toasts -->
+        <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast glass-card px-4 py-3 flex items-center gap-3 rounded-xl border-l-4 
+                        {% if message.tags == 'success' %}border-l-emerald-500 text-emerald-100
+                        {% elif message.tags == 'error' %}border-l-rose-500 text-rose-100
+                        {% elif message.tags == 'warning' %}border-l-amber-500 text-amber-100
+                        {% else %}border-l-blue-500 text-blue-100{% endif %}">
+                        
+                        <div class="shrink-0">
+                            {% if message.tags == 'success' %}<i class="fa-solid fa-circle-check text-emerald-500"></i>
+                            {% elif message.tags == 'error' %}<i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+                            {% elif message.tags == 'warning' %}<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                            {% else %}<i class="fa-solid fa-circle-info text-blue-500"></i>{% endif %}
+                        </div>
+                        <p class="text-sm font-medium">{{ message }}</p>
+                        <button onclick="this.parentElement.remove()" class="ml-2 text-slate-400 hover:text-white transition-colors">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Page Content -->
+        <main class="flex-grow flex flex-col p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-auto py-6 text-center text-slate-500 text-sm">
+            <p>&copy; 2026 QR Attendance System. Team Hokage.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Auto-dismiss toasts after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.classList.add('toast-out');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    <script src="{% static 'js/fingerprint.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

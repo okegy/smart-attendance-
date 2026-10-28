@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - QR Attend{% endblock %}
+
+{% block nav_actions %}
+<a href="{% url 'student_logout' %}" class="px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-lg text-sm font-medium border border-rose-500/20 transition-colors">
+    <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Logout
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto w-full animate-in">
+    <!-- Header Card -->
+    <div class="glass-card p-6 md:p-8 mb-8 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        
+        <div class="flex items-center gap-5 relative z-10">
+            <div class="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center border border-emerald-500/30 shrink-0">
+                <i class="fa-solid fa-user text-2xl text-emerald-400"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ student.s_fname }} {{ student.s_lname }}</h1>
+                <p class="text-emerald-400 font-mono tracking-wide">{{ student.s_roll }}</p>
+                <p class="text-slate-400 text-sm mt-1">{{ student.s_branch }} • Year {{ student.s_year }} • Section {{ student.s_section }}</p>
+            </div>
+        </div>
+        
+        <div class="flex gap-4 w-full md:w-auto relative z-10">
+            <div class="bg-[#121326] rounded-xl p-4 border border-glass flex-1 md:flex-none text-center min-w-[120px]">
+                <div class="text-3xl font-bold text-emerald-400 mb-1 counter">{{ total_present }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">Total Present</div>
+            </div>
+            <div class="bg-[#121326] rounded-xl p-4 border border-glass flex-1 md:flex-none text-center min-w-[120px]">
+                <div class="text-3xl font-bold text-amber-400 mb-1 counter">{{ total_od }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">On Duty</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History View -->
+    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> Attendance History
+    </h2>
+    
+    <div class="space-y-6">
+        {% for day in history %}
+        <div class="glass-card p-6">
+            <div class="flex justify-between items-center mb-4 border-b border-glass pb-4">
+                <h3 class="font-bold text-lg text-white">
+                    <i class="fa-regular fa-calendar text-slate-400 mr-2"></i> {{ day.date|date:"l, F j, Y" }}
+                </h3>
+                <span class="text-xs bg-[#121326] px-3 py-1 rounded-full border border-glass text-slate-300">
+                    {{ day.periods|length }} Periods Marked
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
+                {% for i in "12345678"|make_list %}
+                    {% with p_num=i|add:"0" %}
+                        {% for p in day.periods %}
+                            {% if p.period == p_num %}
+                                <div class="bg-[#121326] rounded-lg p-3 text-center border {% if p.status == 'PRESENT' %}border-emerald-500/50 bg-emerald-500/10{% elif p.status == 'OD' %}border-amber-500/50 bg-amber-500/10{% else %}border-rose-500/50 bg-rose-500/10{% endif %}">
+                                    <div class="text-xs text-slate-400 mb-1">Period {{ p.period }}</div>
+                                    <div class="font-bold {% if p.status == 'PRESENT' %}text-emerald-400{% elif p.status == 'OD' %}text-amber-400{% else %}text-rose-400{% endif %}">
+                                        {% if p.status == 'PRESENT' %}<i class="fa-solid fa-check"></i>
+                                        {% elif p.status == 'OD' %}OD
+                                        {% else %}FLAG{% endif %}
+                                    </div>
+                                    <div class="text-[10px] text-slate-500 mt-1">{{ p.time }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {# This requires custom template logic to check if period exists, for simplicity in UI we'll just let empty gaps be handled by flex if we didn't use a strict grid #}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="glass-card p-12 text-center">
+            <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
+                <i class="fa-solid fa-folder-open text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-slate-300 mb-2">No Records Found</h3>
+            <p class="text-slate-500 text-sm">Your attendance history is currently empty.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

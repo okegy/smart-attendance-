@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance - QR Attend{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto w-full animate-in mt-4">
+    <div class="glass-card p-6 md:p-8 relative overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
+        
+        <div class="text-center mb-8 relative z-10">
+            <div class="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                <i class="fa-solid fa-qrcode text-3xl text-emerald-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white tracking-tight">Mark Attendance</h2>
+            <p class="text-slate-400 text-sm mt-1">{{ session.date|date:"l, F j, Y" }}</p>
+        </div>
+
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl text-sm border {% if message.tags == 'error' %}bg-rose-500/10 border-rose-500/20 text-rose-400{% elif message.tags == 'warning' %}bg-amber-500/10 border-amber-500/20 text-amber-400{% else %}bg-blue-500/10 border-blue-500/20 text-blue-400{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="attendance-form" class="space-y-8 relative z-10">
+            {% csrf_token %}
+            
+            <!-- Hidden fingerprint input -->
+            <input type="hidden" name="device_fingerprint" id="device_fingerprint" value="">
+            
+            <!-- Step 1: Select Period -->
+            <div>
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-emerald-500 text-black flex items-center justify-center text-xs font-bold">1</span> 
+                    Select Period
+                </h3>
+                <div class="grid grid-cols-4 md:grid-cols-8 gap-3">
+                    {% for p_val, p_label in available_periods %}
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="period" value="{{ p_val }}" class="peer sr-only" required>
+                        <div class="p-3 bg-[#121326] border border-glass rounded-xl text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 hover:bg-white/5 transition-all">
+                            <span class="block text-sm font-bold">P{{ p_val }}</span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Step 2: Select Name -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500 text-black flex items-center justify-center text-xs font-bold">2</span> 
+                        Select Your Name
+                    </h3>
+                    
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="student-search" placeholder="Search name or roll..." class="bg-[#121326] border border-glass rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors w-48 md:w-64">
+                    </div>
+                </div>
+
+                <div class="bg-[#121326] border border-glass rounded-xl overflow-hidden">
+                    <div class="max-h-[400px] overflow-y-auto p-2 space-y-1" id="student-list">
+                        {% for s in students %}
+                        <label class="student-item relative cursor-pointer flex items-center p-3 rounded-lg hover:bg-white/5 transition-colors group">
+                            <input type="radio" name="student_id" value="{{ s.s_roll }}" class="peer sr-only" required>
+                            
+                            <!-- Custom Radio Box -->
+                            <div class="w-5 h-5 rounded-full border border-slate-500 flex items-center justify-center mr-4 peer-checked:border-emerald-500 peer-checked:bg-emerald-500">
+                                <div class="w-2 h-2 rounded-full bg-black scale-0 peer-checked:scale-100 transition-transform"></div>
+                            </div>
+                            
+                            <!-- Student Info -->
+                            <div class="flex-grow">
+                                <div class="font-medium text-white group-hover:text-emerald-400 transition-colors student-name">{{ s.s_fname }} {{ s.s_lname }}</div>
+                                <div class="text-xs text-slate-500 font-mono student-roll">{{ s.s_roll }}</div>
+                            </div>
+                            
+                            <div class="text-xs text-slate-500">{{ s.s_branch }}</div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" id="submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl transition-all btn-glow shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center justify-center">
+                <span>Submit Attendance</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('attendance-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const searchInput = document.getElementById('student-search');
+        
+        // Search functionality
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.student-item').forEach(item => {
+                    const name = item.querySelector('.student-name').textContent.toLowerCase();
+                    const roll = item.querySelector('.student-roll').textContent.toLowerCase();
+                    if (name.includes(term) || roll.includes(term)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        if(form) {
+            form.addEventListener('submit', function() {
+                // Generate fresh fingerprint right before submit
+                if(window.DeviceFingerprint) {
+                    window.DeviceFingerprint.refresh();
+                }
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Submitting...';
+                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+            });
+        }
+    });
+</script>
+{% endblock %}

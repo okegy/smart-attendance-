@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Students - QR Attend{% endblock %}
+
+{% block nav_actions %}
+<a href="{% url 'faculty_dashboard' %}" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">
+    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto w-full animate-in">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">Student Database</h1>
+            <p class="text-slate-400">Manage enrolled students across all branches.</p>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+        
+        <!-- Add Student Form -->
+        <div class="lg:col-span-1">
+            <div class="glass-card p-6 sticky top-6">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-emerald-500"></i> Add New Student
+                </h2>
+                
+                <form method="POST" action="{% url 'add_student' %}" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl transition-colors btn-glow mt-4">
+                        Add Student
+                    </button>
+                    <p class="text-xs text-slate-500 text-center mt-3">Default passcode will be the Roll Number.</p>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Student List -->
+        <div class="lg:col-span-2">
+            <div class="glass-card overflow-hidden">
+                <div class="p-6 border-b border-glass flex justify-between items-center bg-black/20">
+                    <h2 class="text-xl font-bold">Enrolled Students ({{ students.count }})</h2>
+                    <div class="relative">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="search-student" placeholder="Search by name or roll..." class="bg-[#121326] border border-glass rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors w-64">
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-[#0c0d1a] z-10 shadow-sm border-b border-glass">
+                            <tr class="text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="p-4 font-medium">Roll No</th>
+                                <th class="p-4 font-medium">Name</th>
+                                <th class="p-4 font-medium">Branch</th>
+                                <th class="p-4 font-medium text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-glass/50" id="student-table-body">
+                            {% for s in students %}
+                            <tr class="hover:bg-white/5 transition-colors student-row">
+                                <td class="p-4 font-mono text-emerald-400 roll-col">{{ s.s_roll }}</td>
+                                <td class="p-4 font-medium text-white name-col">{{ s.s_fname }} {{ s.s_lname }}</td>
+                                <td class="p-4 text-slate-300">{{ s.s_branch }} ({{ s.s_year }}{{ s.s_section }})</td>
+                                <td class="p-4 text-center">
+                                    {% if s.is_active %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-500/10 text-slate-400 border border-slate-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Inactive
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="p-8 text-center text-slate-500">No students found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('search-student').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.student-row').forEach(row => {
+            const roll = row.querySelector('.roll-col').textContent.toLowerCase();
+            const name = row.querySelector('.name-col').textContent.toLowerCase();
+            if (roll.includes(term) || name.includes(term)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}
